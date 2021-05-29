@@ -1,7 +1,7 @@
 import requests, json
 
 
-BASE = "http://anee.pythonanywhere.com/"
+BASE = "https://gamedome2.herokuapp.com/"
 
 response = requests.get(BASE + "login/"+"tempUser")
 print(response)
@@ -14,13 +14,13 @@ dd = {}
 while(True):
     s = input()
     t = input()
-    BASE = "http://anee.pythonanywhere.co/send"
+    BASE = "https://gamedome2.herokuapp.com/send"
     d ={"name":"tempUser", "user":s, "message":t}
     response = requests.get(BASE, params=d)
     # print(response.url)
     print(response.json())
     d = {"name":"tempUser"}
-    BASE = "http://anee.pythonanywhere.com/recieve"
+    BASE = "https://gamedome2.herokuapp.com/recieve"
     response = requests.get(BASE, params=d)
     # print(response.url)
     print(response.json())
