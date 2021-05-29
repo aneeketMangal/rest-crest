@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request
-import requests, json
+from flask import Flask, render_template, request, jsonify
+import requests
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
@@ -37,7 +37,7 @@ def send():
         else:
             return 'BAD RESPONSE'
 
-        d[name].append([user, message])
+        d[name].append({"user": user, "body":message})
         # print(d[name])
         return {"name": name,"user": user,"message": message, "D":str(d[name])}
         
@@ -52,7 +52,8 @@ def recieve():
         name = ''
         if('name' in request_data):
             name = request_data['name']
-            return {"data":d[name]}
+            print("done")
+            return jsonify(d[name])
         else:
             return {"error":"no such room"}
         

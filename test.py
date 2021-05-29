@@ -1,29 +1,30 @@
 import requests, json
 
 
-BASE = "https://gamedome2.herokuapp.com/"
+BASE = "http://127.0.0.1:5000/"
 
-response = requests.get(BASE + "login/"+"tempUser")
-print(response)
-print(response.content)
+# response = requests.get(BASE + "login/"+"tempUser")
+# print(response)
+# print(response.content)
 
 
 dd = {}
-
+# response = requests.get("https://jsonplaceholder.typicode.com/posts")
+# print(response.json())
     
 while(True):
     s = input()
     t = input()
-    BASE = "https://gamedome2.herokuapp.com/send"
+    BASE = "http://aneeket.pythonanywhere.com/send"
     d ={"name":"tempUser", "user":s, "message":t}
     response = requests.get(BASE, params=d)
     # print(response.url)
     print(response.json())
     d = {"name":"tempUser"}
-    BASE = "https://gamedome2.herokuapp.com/recieve"
+    BASE = "http://aneeket.pythonanywhere.com/recieve"
     response = requests.get(BASE, params=d)
-    # print(response.url)
-    print(response.json())
+    print(response.url)
+    print(response)
     
-threading.Thread(target=a).start()
-threading.Thread(target=b).start()
+# threading.Thread(target=a).start()
+# threading.Thread(target=b).start()
