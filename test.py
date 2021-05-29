@@ -1,18 +1,29 @@
 import requests, json
 import jsonify
+import time
+
 BASE = "http://127.0.0.1:5000/"
-data = {"likes":2981, "name": "AneeBoi", "views": 97401},
 
-
-response = requests.get(BASE + "login/"+"dsfadfsa")
+response = requests.get(BASE + "login/"+"tempUser")
 print(response.json())
-BASE = "http://127.0.0.1:5000/send"
 
+
+dd = {}
+
+    
 while(True):
     s = input()
     t = input()
-    d ={"name":"dsfadfsa", "user":s, "message":t}
-    # DD = json.stringify(d)
+    BASE = "http://127.0.0.1:5000/send"
+    d ={"name":"tempUser", "user":s, "message":t}
     response = requests.get(BASE, params=d)
-    print(response.url)
+    # print(response.url)
     print(response.json())
+    d = {"name":"tempUser"}
+    BASE = "http://127.0.0.1:5000/recieve"
+    response = requests.get(BASE, params=d)
+    # print(response.url)
+    print(response.json())
+    
+threading.Thread(target=a).start()
+threading.Thread(target=b).start()
