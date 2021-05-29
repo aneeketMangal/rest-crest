@@ -3,6 +3,9 @@ import requests, json
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
+@app.route('/')
+def home():
+    return render_template('session.html')
 currLoggedIn = ""
 d = {}
 @app.route('/login/<name>', methods = ['GET'])
