@@ -1,11 +1,10 @@
-from flask import Flask, render_template, request
-import requests, json
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 @app.route('/', methods = ['GET'])
 def home():
-    return render_template('session.html')
+    return "<h1>anee</h1>"
 currLoggedIn = ""
 d = {}
 @app.route('/login/<name>', methods = ['GET'])
@@ -14,6 +13,7 @@ def login(name):
         if(name in d):
             dd = {"data":d[name]}
             return dd
+        
         else:
             d[name] = []
             dd = {"data":d[name]}
@@ -37,7 +37,7 @@ def send():
         else:
             return 'BAD RESPONSE'
 
-        d[name].append([user, message])
+        d[name].append({"user": user, "body":message})
         # print(d[name])
         return {"name": name,"user": user,"message": message, "D":str(d[name])}
         
@@ -52,7 +52,8 @@ def recieve():
         name = ''
         if('name' in request_data):
             name = request_data['name']
-            return {"data":d[name]}
+            print("done")
+            return jsonify(d[name])
         else:
             return {"error":"no such room"}
         
@@ -60,5 +61,10 @@ def recieve():
         return {"error": "invalid arguements"}
 
 
+@app.route('/test', methods = ['GET'])  
+def test():
+    return jsonify({"test":"test"})
+    
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=8000, debug=False)
