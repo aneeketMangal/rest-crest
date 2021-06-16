@@ -1,4 +1,6 @@
-class User():
+from flask_login import UserMixin
+from restcrest import db
+class User(UserMixin):
     def __init__(self, userdata:dict):
         self.__id = userdata["_id"]
         self.__username = userdata['username']
@@ -6,6 +8,23 @@ class User():
         self.__password = userdata['password']
         self.__validated = userdata['validated']
         self.__friends = userdata['friends']
+
+    def is_authenticated(self):
+        return True
+    def is_active(self):
+        return True
+    def is_anonymous(self):
+        return False
+    def get_id(self):
+        return self.__id
+
+    @classmethod
+    def get_by_id(self, id):
+        data = db.userD.find_one({"_id":id})
+        if(data):
+            return data
+        else:
+            return None
 
     def getInfo(self):
         return {
@@ -43,5 +62,6 @@ class User():
         return password == self.__password  
 
     
+
 
 

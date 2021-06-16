@@ -1,33 +1,22 @@
-from flask import Flask, render_template, request, jsonify, url_for, flash, redirect
-from flask_pymongo import PyMongo
-from forms.login_form import LoginForm
-from forms.register_form import RegisterForm
-from elements.user.user import User
-# from flask.views import MethodView
+from restcrest import app
 from datetime import datetime
+import json
+from bson import json_util
+from flask import Flask, render_template, request, jsonify, url_for, flash, redirect
 from flask_classful import FlaskView, route
-from database.user_database import UserDatabase
-from database.post_database import PostDatabase
-from backend.fetch_posts import FetchPost
-from config import configDetails
+from restcrest.database.user_database import UserDatabase
+from restcrest.database.post_database import PostDatabase
+from restcrest.backend.fetch_posts import FetchPost
+from restcrest.forms.login_form import LoginForm
+from restcrest.forms.register_form import RegisterForm
+from restcrest.elements.user.user import User
+from flask_login import login_user, LoginManager, current_user, login_required, logout_user
+from restcrest import login_manager
+from bson.objectid import ObjectId
+user_db = UserDatabase()
+post_db = PostDatabase()
+postFetch = FetchPost()
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = configDetails['SECRET_KEY']
-app.config["MONGO_URI"] = configDetails["MONGO_URI"] 
-app.config["CURRENT_USER"] = None
-app.config["CURRENT_USER_NAME"] = "Anonymous"
-app.config["CURRENT_PFP"] = configDetails["CURRENT_PFP"] 
-app.config["LOGO"] = configDetails["LOGO"] 
-app.config["APP_NAME"] = "The Rest Crest"
-# app.config.from_pyfile('config.py')
-
-
-
-mongodb_client = PyMongo(app)
-db = mongodb_client.db
-user_db = UserDatabase(db)
-post_db = PostDatabase(db)
-postFetch = FetchPost(db)
 
 @app.route('/')
 @app.route('/home')
@@ -40,6 +29,8 @@ def home():
 
 @app.route("/register", methods = ['GET', 'POST'])
 def register():
+    if(current_user.is_authenticated):
+        return redirect(url_for('home'))
     form = RegisterForm()
     if(form.validate_on_submit()):
         databaseLog = user_db.checkUserAvailability(form.username.data, form.email.data)
@@ -73,26 +64,20 @@ def create():
 
 
 
-@app.route('/logout')
+@app.route("/logout")
+@login_required
 def logout():
-    app.config["CURRENT_USER"] = None
-    flash('You are successfully logged out', 'primary')
-        
+    logout_user()
     return redirect(url_for('home'))
-
 
 @app.route('/login',  methods = ['GET', 'POST'])
 def login():
+   
     form = LoginForm()
     if(form.validate_on_submit()):
         databaseLog = user_db.verifyUserDetails(form.username.data,form.password.data)
-
-        
         if(databaseLog['isAvailable']):
-            app.config["CURRENT_USER"] = User(databaseLog['userData'])
-            app.config["CURRENT_USER_NAME"] = databaseLog['userData']['username']
-            app.config["CURRENT_PFP"] = databaseLog['userData']['pfp']
-            # user_db.addUser(form.username.data, form.password.data)
+            login_user(User(databaseLog['userData']), remember = form.remember.data)
             flash(f'Welcome {form.username.data}!', 'success')
             return redirect(url_for('home'))
         else:
@@ -102,10 +87,18 @@ def login():
 
 @app.route("/test")
 def addUser():
-    a = postFetch.getGlobalPosts()
-    return jsonify({'success':a})
+    print(current_user)
+    # a = postFetch.getGlobalPosts()
+    return {'success':current_user.getInfo()}
 
 
-
-if __name__ == '__main__':
-    app.run(debug = True)
+@login_manager.user_loader
+def load_user(userid):
+    userid = userid['$oid']
+    user = user_db.getById(ObjectId(userid))
+    print(user)
+    if user is not None:
+        print(user)
+        return User(user)
+    else:
+        return None

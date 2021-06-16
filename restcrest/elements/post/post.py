@@ -1,5 +1,4 @@
-from elements.user.user import User
-from database.user_database import UserDatabase
+from restcrest.elements.user.user import User
 from datetime import datetime
 
 class Post:
