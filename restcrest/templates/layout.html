@@ -45,17 +45,24 @@
         <div class="collapse navbar-collapse" id="navbarToggle" style="position: absolute; right:30px;">
           <div class="navbar-nav mr-auto">
             <a class="nav-item nav-link" href="/">Home</a>
-            <a class="nav-item nav-link" href="/about">About</a>
+            <!-- <a class="nav-item nav-link" href="/about">About</a> -->
           </div>
 
+          {% if current_user.is_authenticated %}
           <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/create">create</a>
+            <a class="nav-item nav-link" href="/logout">Logout</a>
+          </div>
+            <div class="nav-item mt-2 pl-5">
+              <img src="{{ config.CURRENT_PFP }}" class="avatar" alt="User DP" align="right">
+          </div>
+            {% else  %}
+            <div class="navbar-nav">
             <a class="nav-item nav-link" href="/login">Login</a>
             <a class="nav-item nav-link" href="/register">Register</a>
-            <a class="nav-item nav-link" href="/create">create</a>
-          </div>
-          <div class="nav-item mt-2 pl-5">
-            <img src="{{ config.CURRENT_PFP }}" class="avatar" alt="User DP" align="right">
-          </div>
+            </div>
+            {% endif %}
+          
 
         </div>
       </div>
