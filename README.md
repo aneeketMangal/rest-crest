@@ -1,2 +1,2 @@
-# Rest-API
-This repository contains the code for a REST-API created using flask. It also contains the trial flutter app that utilises the API.
+# Rest Crest
+It is a micro-blogging webapp developed using mongodb and flask
